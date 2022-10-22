@@ -29,7 +29,7 @@ def record(
     key_bindings: Dict[str, Any],
     tty_stdin_fd: int = pty.STDIN_FILENO,
     tty_stdout_fd: int = pty.STDOUT_FILENO,
-) -> None:
+) -> Tuple[int, int]:
     pty_fd: Any = None
     start_time: Optional[float] = None
     pause_time: Optional[float] = None
@@ -148,7 +148,15 @@ def record(
             except (IOError, OSError):
                 pass
 
-    os.waitpid(pid, 0)
+    _, exit_info = os.waitpid(pid, 0)
+
+    # exit_info is a 16-bit int with:
+    #  - least significant 8 bits - the signal that killed the process
+    #  - most significant 8 bits - the exit code
+    # parse them out and return them. On windows the exit signal is always 0
+    exit_code = exit_info >> 8
+    exit_signal = exit_info & 0xFF
+    return exit_code, exit_signal
 
 
 class SignalFD:

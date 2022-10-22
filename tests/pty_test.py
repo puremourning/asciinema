@@ -47,8 +47,11 @@ class TestRecord(Test):
             ),
         ]
 
-        asciinema.pty_.record(
+        # prove that we return them.
+        exit_code, exit_signal = asciinema.pty_.record(
             command, {}, writer, lambda: (80, 24), lambda s: None, {}
         )
 
+        assert exit_code == 0
+        assert exit_signal == 0
         assert writer.data == [b"foo", b"bar"]

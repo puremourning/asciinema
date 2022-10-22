@@ -7,7 +7,7 @@ if sys.version_info < (3, 6):
     raise ImportError("Python < 3.6 is unsupported.")
 
 # pylint: disable=wrong-import-position
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
 from .recorder import record
 
@@ -21,8 +21,8 @@ def record_asciicast(  # pylint: disable=too-many-arguments
     title: Optional[str] = None,
     command_env: Any = None,
     capture_env: Any = None,
-) -> None:
-    record(
+) -> Tuple[int, int]:
+    return record(
         path_,
         command=command,
         append=append,

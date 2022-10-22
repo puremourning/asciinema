@@ -103,7 +103,7 @@ class RecordCommand(Command):  # pylint: disable=too-many-instance-attributes
         )
 
         try:
-            recorder.record(
+            exit_code, exit_signal = recorder.record(
                 self.filename,
                 command=self.command,
                 append=append,
@@ -137,7 +137,7 @@ class RecordCommand(Command):  # pylint: disable=too-many-instance-attributes
                 except KeyboardInterrupt:
                     self.print("\r", end="")
                     self.print_info(f"asciicast saved to {self.filename}")
-                    return 0
+                    return exit_code
 
             try:
                 result, warn = self.api.upload_asciicast(self.filename)
@@ -158,7 +158,7 @@ class RecordCommand(Command):  # pylint: disable=too-many-instance-attributes
         else:
             self.print_info(f"asciicast saved to {self.filename}")
 
-        return 0
+        return exit_code
 
 
 def _tmp_path() -> Optional[str]:

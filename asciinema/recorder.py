@@ -19,12 +19,12 @@ def record(  # pylint: disable=too-many-arguments,too-many-locals
     command_env: Optional[Dict[str, str]] = None,
     capture_env: Optional[List[str]] = None,
     writer: Type[w2] = v2.writer,
-    record_: Callable[..., None] = pty.record,
+    record_: Callable[..., Tuple[int, int]] = pty.record,
     notify: Callable[[str], None] = lambda _: None,
     key_bindings: Optional[Dict[str, Any]] = None,
     cols_override: Optional[int] = None,
     rows_override: Optional[int] = None,
-) -> None:
+) -> Tuple[int, int]:
     if command is None:
         command = os.environ.get("SHELL", "sh")
 
@@ -60,7 +60,7 @@ def record(  # pylint: disable=too-many-arguments,too-many-locals
         )
 
         with async_writer(sync_writer, time_offset, record_stdin) as _writer:
-            record_(
+            return record_(
                 ["sh", "-c", command],
                 command_env,
                 _writer,
